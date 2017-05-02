@@ -153,8 +153,10 @@ void SysTick_Handler(void)
 }*/
 #include "usart.h"
 #include "queue.h"
+#include "wifi.h"
 extern Queue queue;
 extern int total;
+
 //PC
 void USART1_IRQHandler(void)
 {
@@ -181,12 +183,7 @@ void USART2_IRQHandler(void)
 		ch = USART_ReceiveData(WIFI_USART);
 		Offer(&queue,ch);
 		//结束接收
-		if(ch == 'a' || ch=='k'|| (ch>'0'&&ch<'9'))
-		{
-			Offer(&queue,'\n');
-			total = 1;
-		}
-		else if(ch == '\n')
+		if(ch == END)
 		{
 			total = 1;
 		}

@@ -1,7 +1,7 @@
 #ifndef __QUEUE_HH
 #define __QUEUE_HH
 
-#define QueueSize 1024
+#define QueueSize 256
 
 typedef struct{
     char array[QueueSize];

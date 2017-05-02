@@ -1,12 +1,14 @@
 #include "wifi.h"
 
-
-void WIFI_Init()
+/*
+* wifi初始化
+*/
+void WIFI_Init(DataPacket *packet)
 {
 	int i=0;
 	for(i=0;i<6;i++)
 	{
-		sendData[i] = WIFI_MAC[i];
+		sendData[6+i] = WIFI_MAC[i];
 	}
 	
 	Send_ToWIFI("++++");
@@ -16,23 +18,82 @@ void WIFI_Init()
 	Send_ToWIFI("at+netp=TCP,CLIENT,9999,192.168.23.1\n");
 	Delay_MS(500);
 	Send_ToWIFI("at+entm\n");
+	Delay_MS(2000);
+	
+	//进行注册
+	Packet_Init(packet);
+	Send_Response(packet,0);
 }
 
-/*
-* 发送数据
-*/
-void Send_Data(s8* target,s8 cmd,s16 data)
+void Packet_Init(DataPacket *packet)
 {
 	int i=0;
 	for(i=0;i<6;i++)
 	{
-		sendData[6+i] = target[i];
+		packet->target[i]=WIFI_MAC[i];
+		packet->origin[i]=WIFI_MAC[i];
 	}
-	sendData[12] = cmd;
-	sendData[13] = (data >> 2) & 0xff;
-	sendData[14] = data & 0xff;
-	sendData[15] = '\n';
-	
+	packet->cmd = IS_MCU;
+	for(i=0;i<15;i++)
+	{
+		packet->data[i]=0;
+	}
+}
+
+/*
+* 发送数据
+* len 数据正文长度
+*/
+void Send_Response(DataPacket *packet,int len)
+{
+	int i=0;
+	//来源作为自己的目标
+	for(i=0;i<6;i++)
+	{
+		sendData[i] = packet->origin[i];
+	}
+	sendData[12] = packet->cmd;
+	for(i=0;i<len;i++)
+	{
+		sendData[13+i]=packet->data[i];
+	}
+	sendData[13+len] = END;
 	Send_ToWIFI(sendData);
+}
+
+/**
+* 拿到接收的数据
+*/
+int Get_Receive(DataPacket *packet,char* cmds,int len)
+{
+	int i=0;
+	int result = 0;
+	
+	if(len < DATA_MIN_LEN)
+		return -1;
+
+	//拿到数据目的、来源、命令、数据
+	for(i=0;i<6;i++,cmds++)
+	{
+		packet->target[i] = *cmds;
+	}
+	for(i=0;i<6;i++,cmds++)
+	{
+		packet->origin[i] = *cmds;
+	}
+	packet->cmd = *cmds++;
+	i=0;
+	while(*cmds!=END)
+	{
+		packet->data[i++] = *cmds++;
+	}
+	result = i;
+	
+	//校验目标是否是自己
+//	for(i=0;i<6;i++)
+//		if(packet->target[i]!= WIFI_MAC[i])
+//			return -2;
+		
+	return result;
 }
 
