@@ -9,6 +9,9 @@
 //获取命令
 int Get_Cmd(char* cmd, Queue *q);
 
+//执行任务
+void doJob(DataPacket *packet,int dataLen);
+
 //数据队列
 Queue queue;
 
@@ -52,24 +55,52 @@ int main()
 				continue;
 			}
 			result = Get_Receive(&packet,cmd,len);
-			switch(result)
+			if(result >=0)
 			{
-				case -1:
-					Send_ToPC("length is small:");
-					break;
+				Send_ToPC("start do job");
+				doJob(&packet,result);
+			}
+			else
+			{
+				Send_ToPC("unkown cmd");
+				break;
+			}
+//			switch(result)
+//			{
+//				case -1:
+//					Send_ToPC("length is small:");
+//					break;
 //				case -2:
 //					Send_ToPC("target is error:");
 //					break;
-				default:
-					Send_ToPC("is ok\n");
-					Send_Response(&packet,result);
-					break;
-			}
+//				default:
+//					Send_ToPC("is ok\n");
+//					Send_Response(&packet,result);
+//					break;
+//			}
 			Send_ToPC(cmd);
 			total = Empty(&queue)?0:1;
 		}
 	}
 }
+
+/*
+* 执行任务
+*/
+void doJob(DataPacket *packet,int dataLen)
+{
+	switch(packet->cmd)
+	{
+		//app发出的确认是否在线
+		case ONLINE:
+			packet->cmd = OK;
+			Send_Response(packet,0);
+			break;
+		
+		default:break;
+	}
+}
+
 
 /*
 * 获得一条命令

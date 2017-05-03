@@ -16,6 +16,7 @@ void WIFI_Init(DataPacket *packet)
 	Send_ToWIFI("a");
 	Delay_MS(500);
 	Send_ToWIFI("at+netp=TCP,CLIENT,9999,192.168.23.1\n");
+//	Send_ToWIFI("at+netp=TCP,CLIENT,9999,120.24.96.239\n");
 	Delay_MS(500);
 	Send_ToWIFI("at+entm\n");
 	Delay_MS(2000);
@@ -63,6 +64,7 @@ void Send_Response(DataPacket *packet,int len)
 
 /**
 * 拿到接收的数据
+* 返回数据正文长度
 */
 int Get_Receive(DataPacket *packet,char* cmds,int len)
 {

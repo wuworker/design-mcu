@@ -10,6 +10,7 @@ static char WIFI_MAC[]={94,207,127,241,220,96};
 //CMD
 #define OK       0x11
 #define IS_MCU   0x22
+#define ONLINE   0x12
 
 #define END      0x0a
 
