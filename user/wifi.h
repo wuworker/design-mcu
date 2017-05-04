@@ -12,6 +12,9 @@ static char WIFI_MAC[]={94,207,127,241,220,96};
 #define IS_MCU   0x22
 #define ONLINE   0x12
 
+#define ON       0x61
+#define OFF      0x62
+
 #define END      0x0a
 
 //最小长度
@@ -34,6 +37,7 @@ static char sendData[DATA_MAX_LEN];
 //wifi初始化
 void WIFI_Init(DataPacket *packet);
 
+//数据包初始化
 void Packet_Init(DataPacket *packet);
 
 //发送数据

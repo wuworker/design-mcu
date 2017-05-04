@@ -163,7 +163,6 @@ void USART1_IRQHandler(void)
 	uint8_t ch;
 	if(USART_GetITStatus(PC_USART, USART_IT_RXNE) != RESET)
 	{ 	
-	    //ch = USART2->DR;
 		ch = USART_ReceiveData(PC_USART);
 		Offer(&queue,ch);
 		//结束接收

@@ -1,6 +1,5 @@
 #include<stm32f10x.h>
 #include "common.h"
-#include "led.h"
 #include "usart.h"
 #include "queue.h"
 #include "pwm.h"
@@ -21,16 +20,16 @@ int total;
 int main()
 {
 	DataPacket packet;
-	char cmd[100];
+	char cmd[DATA_MAX_LEN];
+	//命令长度
 	int len = 0;
 	int result = 0;
 	total = 0;
 	Queue_Init(&queue);
 	
-	//PWM_Init();
-	//LED_Init();
-
-	Delay_MS(2000);
+	Delay_MS(1000);
+	
+	PWM_Init();
 	WIFI_USART_Init();
 	PC_USART_Init();
 	WIFI_NVIC_Init();
@@ -41,10 +40,9 @@ int main()
 	
 	Send_ToPC("wifi init success\n");
 	
-//	LED(ON);
 	while(1)
 	{
-//		PWM_Out(10000);
+		//为1说明有数据
 		while(total)
 		{
 			len = Get_Cmd(cmd,&queue);
@@ -57,28 +55,12 @@ int main()
 			result = Get_Receive(&packet,cmd,len);
 			if(result >=0)
 			{
-				Send_ToPC("start do job");
 				doJob(&packet,result);
 			}
 			else
 			{
 				Send_ToPC("unkown cmd");
-				break;
 			}
-//			switch(result)
-//			{
-//				case -1:
-//					Send_ToPC("length is small:");
-//					break;
-//				case -2:
-//					Send_ToPC("target is error:");
-//					break;
-//				default:
-//					Send_ToPC("is ok\n");
-//					Send_Response(&packet,result);
-//					break;
-//			}
-			Send_ToPC(cmd);
 			total = Empty(&queue)?0:1;
 		}
 	}
@@ -94,9 +76,15 @@ void doJob(DataPacket *packet,int dataLen)
 		//app发出的确认是否在线
 		case ONLINE:
 			packet->cmd = OK;
-			Send_Response(packet,0);
+			packet->data[0]=PWM_Level();
+			Send_Response(packet,1);
 			break;
-		
+		case ON:
+			PWM_Out(packet->data[0]);
+			break;
+		case OFF:
+			PWM_Out(0);
+			break;
 		default:break;
 	}
 }
