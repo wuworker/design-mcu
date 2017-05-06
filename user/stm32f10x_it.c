@@ -154,8 +154,11 @@ void SysTick_Handler(void)
 #include "usart.h"
 #include "queue.h"
 #include "wifi.h"
+#include "tim.h"
+
 extern Queue queue;
 extern int total;
+extern int time_out;
 
 //PC
 void USART1_IRQHandler(void)
@@ -187,6 +190,19 @@ void USART2_IRQHandler(void)
 			total = 1;
 		}
 	}
+}
+
+//led定时
+void TIM4_IRQHandler(void)  
+{  
+    TIM_ClearITPendingBit(LED_TIM, TIM_IT_Update);  
+   
+	Send_ToPC("led\n");
+    if(Time_Up())
+    {
+		
+	    time_out=1;
+    }
 }
 /**
   * @}

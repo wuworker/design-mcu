@@ -7,14 +7,7 @@
 //MAC   5ECF7FF1DC60
 static char WIFI_MAC[]={94,207,127,241,220,96};
 
-//CMD
-#define OK       0x11
-#define IS_MCU   0x22
-#define ONLINE   0x12
-
-#define ON       0x61
-#define OFF      0x62
-
+//结束符
 #define END      0x0a
 
 //最小长度
@@ -22,8 +15,23 @@ static char WIFI_MAC[]={94,207,127,241,220,96};
 //最大长度
 #define DATA_MAX_LEN   30
 
+typedef enum
+{
+	OK        = 0x11,
+	ONLINE    = 0x12,
+	
+	IS_MCU    = 0x22,
+	
+	ON        = 0x61,
+	OFF       = 0x62,
+	TIME_ON   = 0x63,
+	TIME_OFF  = 0x64,
+	TIME_CLR  = 0x65
+}CMD;
+
 //数据包
-typedef struct{
+typedef struct
+{
 	char target[6];  //目标
 	char origin[6];  //来源
     char cmd;		//命令

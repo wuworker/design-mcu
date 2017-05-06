@@ -70,37 +70,6 @@ void PC_USART_Init(void)
 	USART_Cmd(PC_USART,ENABLE);
 }
 
-/* 
-	WIFI接收中断
-*/
-void WIFI_NVIC_Init(void)
-{
-	NVIC_InitTypeDef NVIC_InitStructure; 
-	 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
-	
-	NVIC_InitStructure.NVIC_IRQChannel = WIFI_IRQ;	 
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-}
-/* 
-*	PC接收中断
-*/
-void PC_NVIC_Init(void)
-{
-	NVIC_InitTypeDef NVIC_InitStructure; 
-	 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
-	
-	NVIC_InitStructure.NVIC_IRQChannel = PC_IRQ;	 
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-}
-
 /*
 	pringf重定向到PC
 */

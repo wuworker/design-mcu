@@ -21,9 +21,6 @@
 void WIFI_USART_Init(void);
 void PC_USART_Init(void);
 
-void WIFI_NVIC_Init(void);
-void PC_NVIC_Init(void);
-
 void Send_ToWIFI(char *s);
 void Send_ToPC(char *s);
 
