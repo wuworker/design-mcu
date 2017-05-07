@@ -13,6 +13,13 @@
 // LED_PERIOD * LED_PRES/72000000 = 1
 #define LED_SS        1
 
+//限制多长时间
+extern u16 limit_minute;
+extern u16 limit_second;
+
+//现在时间
+extern u16 second;
+extern u16 minute;
 
 //初始化
 void TIME_Init(void);
@@ -23,7 +30,8 @@ u8 Time_Up(void);
 //设置定时时间
 //单位分钟
 //最大限制30天
-void Time_Begin(u16 minutes);
+void Time_Begin(u16 minutes,u16 second);
+void Time_BeginOfDay(u8 day,u8 hour,u8 minute,u8 second);
 
 //清除定时任务
 void Time_Clear(void);

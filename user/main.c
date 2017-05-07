@@ -22,7 +22,7 @@ int total;
 
 //定时是否到达
 int time_out;
-//定时状态
+//定时的pwm
 int time_pwm;
 
 int main()
@@ -59,16 +59,20 @@ int main()
 		//定时时间到达
 		if(time_out)
 		{
+			Send_ToPC("time over\n");
 			doTimeJob();
+			packet.cmd = TIME_OVER;
+			packet.data[0] = time_pwm;
+			Send_Response(&packet,1);
 		}
 		//服务器数据到达
 		while(total)
 		{
 			len = Get_Cmd(cmd,&queue);
-			//这是服务器发的心跳包
+			Send_ToPC(cmd);
+			//这可能是服务器发的心跳包
 			if(len == 2)
 			{
-				Send_ToPC("heartbeat\n");
 				total = Empty(&queue)?0:1;
 				continue;
 			}
@@ -76,10 +80,6 @@ int main()
 			if(result >=0)
 			{
 				doJob(&packet,result);
-			}
-			else
-			{
-				Send_ToPC("unkown cmd");
 			}
 			total = Empty(&queue)?0:1;
 		}
@@ -94,7 +94,7 @@ void doJob(DataPacket *packet,int dataLen)
 	switch(packet->cmd)
 	{
 		//app发出的确认是否在线
-		case ONLINE:
+		case STATUS:
 			packet->cmd = OK;
 			packet->data[0]=PWM_Level();
 			Send_Response(packet,1);
@@ -107,15 +107,18 @@ void doJob(DataPacket *packet,int dataLen)
 			PWM_Out(0);
 			break;
 		//定时开和关
+		//data[]
 		case TIME_ON:
 			time_out=0;
-			time_pwm = packet->data[0]; 
-			Time_Begin((packet->data[1]<<8 & 0xff00)|(packet->data[2]));
+			time_pwm = packet->data[0];
+			Time_BeginOfDay(packet->data[1],packet->data[2],packet->data[3],packet->data[4]);
+			printf("limit:%d,%d\n",limit_minute,limit_second);
 			break;
 		case TIME_OFF:
 			time_out=0;
 			time_pwm = 0;
-			Time_Begin((packet->data[1]<<8 & 0xff00)|(packet->data[2]));
+			Time_BeginOfDay(packet->data[0],packet->data[1],packet->data[2],packet->data[3]);
+			printf("limit:%d,%d\n",limit_minute,limit_second);
 			break;
 		case TIME_CLR:
 			time_out=0;
@@ -124,6 +127,7 @@ void doJob(DataPacket *packet,int dataLen)
 		default:break;
 	}
 }
+
 //定时任务
 void doTimeJob()
 {

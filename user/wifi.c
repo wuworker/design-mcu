@@ -15,9 +15,9 @@ void WIFI_Init(DataPacket *packet)
 	Delay_MS(500);
 	Send_ToWIFI("a");
 	Delay_MS(500);
-	Send_ToWIFI("at+netp=TCP,CLIENT,9999,192.168.23.1\n");
-//	Send_ToWIFI("at+netp=TCP,CLIENT,9999,120.24.96.239\n");
-	Delay_MS(500);
+//	Send_ToWIFI("at+netp=TCP,CLIENT,9999,192.168.23.1\n");
+	Send_ToWIFI("at+netp=TCP,CLIENT,9999,120.24.96.239\n");
+	Delay_MS(1000);
 	Send_ToWIFI("at+entm\n");
 	Delay_MS(500);
 	
@@ -45,7 +45,7 @@ void Packet_Init(DataPacket *packet)
 }
 
 /*
-* 发送数据
+* 发送数据，加个偏移量
 * len 数据正文长度
 */
 void Send_Response(DataPacket *packet,int len)
@@ -59,7 +59,7 @@ void Send_Response(DataPacket *packet,int len)
 	sendData[12] = packet->cmd;
 	for(i=0;i<len;i++)
 	{
-		sendData[13+i]=packet->data[i];
+		sendData[13+i]=packet->data[i] + DATA_OFFEST;
 	}
 	sendData[13+len] = END;
 	Send_ToWIFI(sendData);
@@ -67,6 +67,7 @@ void Send_Response(DataPacket *packet,int len)
 
 /**
 * 拿到接收的数据
+* 减个偏移量
 * 返回数据正文长度
 */
 int Get_Receive(DataPacket *packet,char* cmds,int len)
@@ -90,7 +91,7 @@ int Get_Receive(DataPacket *packet,char* cmds,int len)
 	i=0;
 	while(*cmds!=END)
 	{
-		packet->data[i++] = *cmds++;
+		packet->data[i++] = *cmds++ - DATA_OFFEST;
 	}
 	result = i;
 	

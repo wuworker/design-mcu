@@ -15,10 +15,13 @@ static char WIFI_MAC[]={94,207,127,241,220,96};
 //最大长度
 #define DATA_MAX_LEN   30
 
+//数据偏移量
+#define DATA_OFFEST    50
+
 typedef enum
 {
 	OK        = 0x11,
-	ONLINE    = 0x12,
+	STATUS    = 0x12,
 	
 	IS_MCU    = 0x22,
 	
@@ -26,7 +29,8 @@ typedef enum
 	OFF       = 0x62,
 	TIME_ON   = 0x63,
 	TIME_OFF  = 0x64,
-	TIME_CLR  = 0x65
+	TIME_CLR  = 0x65,
+	TIME_OVER = 0x66
 }CMD;
 
 //数据包

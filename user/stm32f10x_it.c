@@ -197,10 +197,9 @@ void TIM4_IRQHandler(void)
 {  
     TIM_ClearITPendingBit(LED_TIM, TIM_IT_Update);  
    
-	Send_ToPC("led\n");
+	printf("%d,%d\n",minute,second);
     if(Time_Up())
     {
-		
 	    time_out=1;
     }
 }
