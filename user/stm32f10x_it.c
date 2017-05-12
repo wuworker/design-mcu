@@ -159,6 +159,7 @@ void SysTick_Handler(void)
 extern Queue queue;
 extern int total;
 extern int time_out;
+extern int heart;
 
 //PC
 void USART1_IRQHandler(void)
@@ -193,11 +194,18 @@ void USART2_IRQHandler(void)
 }
 
 //led定时
+//心跳定时
 void TIM4_IRQHandler(void)  
 {  
+	static int s = 0;
     TIM_ClearITPendingBit(LED_TIM, TIM_IT_Update);  
-   
-	printf("%d,%d\n",minute,second);
+    s++;
+
+	if(s == 15)
+	{
+		heart = 1;
+		s=0;
+	}
     if(Time_Up())
     {
 	    time_out=1;

@@ -25,6 +25,8 @@ typedef enum
 	
 	IS_MCU    = 0x22,
 	
+	ONLINE    = 0x31,
+	
 	ON        = 0x61,
 	OFF       = 0x62,
 	TIME_ON   = 0x63,

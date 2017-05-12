@@ -19,7 +19,7 @@ void WIFI_Init(DataPacket *packet)
 	Send_ToWIFI("at+netp=TCP,CLIENT,9999,120.24.96.239\n");
 	Delay_MS(1000);
 	Send_ToWIFI("at+entm\n");
-	Delay_MS(500);
+	Delay_MS(1000);
 	
 	//进行注册
 	Packet_Init(packet);

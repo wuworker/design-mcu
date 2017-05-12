@@ -25,6 +25,9 @@ int time_out;
 //定时的pwm
 int time_pwm;
 
+//是否需要发送心跳
+int heart;
+
 int main()
 {
 	DataPacket packet;
@@ -65,17 +68,19 @@ int main()
 			packet.data[0] = time_pwm;
 			Send_Response(&packet,1);
 		}
+		//发送心跳
+		if(heart)
+		{
+			heart = 0;
+			Send_ToPC("send heart");
+			packet.cmd = ONLINE;
+			Send_Response(&packet,0);
+		}
 		//服务器数据到达
 		while(total)
 		{
 			len = Get_Cmd(cmd,&queue);
 			Send_ToPC(cmd);
-			//这可能是服务器发的心跳包
-			if(len == 2)
-			{
-				total = Empty(&queue)?0:1;
-				continue;
-			}
 			result = Get_Receive(&packet,cmd,len);
 			if(result >=0)
 			{

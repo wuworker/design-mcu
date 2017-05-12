@@ -8,6 +8,9 @@ u16 limit_second;
 u16 second;
 u16 minute;
 
+//定时使能
+u8 enable;
+
 /*
 * 定时器初始化
 */
@@ -25,8 +28,10 @@ void TIME_Init()
 	TIM_TimeBaseInit(LED_TIM, &TIM_TimeBaseStructure);  
     
 	TIM_ITConfig(LED_TIM, TIM_IT_Update, ENABLE ); 
-	//开始禁止启动
-	TIM_Cmd(LED_TIM,DISABLE);  
+
+	TIM_Cmd(LED_TIM,ENABLE); 
+
+	enable = 0;	
 }
 
 /*
@@ -35,6 +40,10 @@ void TIME_Init()
 */
 u8 Time_Up(void)
 {
+	if(!enable)
+	{
+		return 0;
+	}
 	if(++second == 60)
 	{
 		second = 0;
@@ -49,7 +58,8 @@ u8 Time_Up(void)
 	{
 		limit_second=0;
 		second=0;
-		TIM_Cmd(LED_TIM,DISABLE); 
+		//禁止使能
+		enable = 0;
 		return 1;
 	}
 	return 0;
@@ -70,7 +80,7 @@ void Time_Begin(u16 min,u16 sec)
 	limit_minute = min;
 	limit_second = sec;
 	
-	TIM_Cmd(LED_TIM,ENABLE);
+	enable = 1;
 }
 
 void Time_BeginOfDay(u8 day,u8 hour,u8 minute,u8 second)
@@ -88,7 +98,7 @@ void Time_Clear()
 	minute = 0;
 	limit_minute = 0;
 	
-	TIM_Cmd(LED_TIM,DISABLE);
+	enable = 0;
 }
 
 
