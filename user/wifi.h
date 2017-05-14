@@ -4,8 +4,14 @@
 #include "usart.h"
 #include "common.h"
 
-//MAC   5ECF7FF1DC60
-static char WIFI_MAC[]={94,207,127,241,220,96};
+//绿灯MAC   5ECF7FF1DC60
+//static char WIFI_MAC[]={94,207,127,241,220,96};
+
+//白灯MAC   5CCF7FF1DA9B
+//static char WIFI_MAC[]={92,207,127,241,218,155};
+
+//蓝灯MAC   5CCF7FF1DB2B
+static char WIFI_MAC[]={92,207,127,241,219,43};
 
 //结束符
 #define END      0x0a
